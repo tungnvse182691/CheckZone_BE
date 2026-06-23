@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using CheckZone.Api.DTOs;
 using CheckZone.Api.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 
 namespace CheckZone.Api.Controllers
 {
@@ -12,10 +15,17 @@ namespace CheckZone.Api.Controllers
     public class ScamReportsController : ControllerBase
     {
         private readonly IScamReportService _scamReportService;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public ScamReportsController(IScamReportService scamReportService)
+        public ScamReportsController(
+            IScamReportService scamReportService,
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration)
         {
             _scamReportService = scamReportService;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         [HttpGet("public/scams")]
@@ -51,8 +61,53 @@ namespace CheckZone.Api.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (string.IsNullOrEmpty(dto.CaptchaToken) || !await ValidateTurnstileToken(dto.CaptchaToken))
+            {
+                return BadRequest(new { message = "Xác minh mã CAPTCHA người máy thất bại hoặc không hợp lệ." });
+            }
+
             var result = await _scamReportService.SubmitReportAsync(dto);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+        }
+
+        private async Task<bool> ValidateTurnstileToken(string token)
+        {
+            var secretKey = _configuration["Turnstile:SecretKey"];
+            if (string.IsNullOrEmpty(secretKey))
+            {
+                // Fallback to test key
+                secretKey = "1x00000000000000000000000000000000";
+            }
+
+            var httpClient = _httpClientFactory.CreateClient();
+            var values = new Dictionary<string, string>
+            {
+                { "secret", secretKey },
+                { "response", token }
+            };
+
+            try
+            {
+                var content = new FormUrlEncodedContent(values);
+                var response = await httpClient.PostAsync("https://challenges.cloudflare.com/turnstile/v0/siteverify", content);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return false;
+                }
+
+                var jsonResult = await response.Content.ReadFromJsonAsync<TurnstileResponse>();
+                return jsonResult?.Success ?? false;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private class TurnstileResponse
+        {
+            [System.Text.Json.Serialization.JsonPropertyName("success")]
+            public bool Success { get; set; }
         }
 
         [Authorize]

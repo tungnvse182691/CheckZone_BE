@@ -48,5 +48,8 @@ namespace CheckZone.Api.DTOs
         [Required]
         [Range(0, 1)]
         public int Category { get; set; }
+
+        [Required]
+        public string CaptchaToken { get; set; } = string.Empty;
     }
 }

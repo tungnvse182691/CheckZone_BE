@@ -14,6 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IScamReportService, ScamReportService>();
 builder.Services.AddScoped<ILegitProfileService, LegitProfileService>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
