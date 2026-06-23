@@ -1,0 +1,39 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# IDEs and Editors
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Publish output
+publish/
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ASP.NET Core user secrets
+secrets.json
+
+# Secrets and user configs
+[Aa]ppsettings.json
+[Aa]ppsettings.Development.json
+[Aa]ppsettings.Development.*.json
+[Aa]ppsettings.local.json
+[Aa]ppsettings.Production.json
+[Aa]ppsettings.staging.json
+[Aa]ppsettings.*.local.json
+
+# Backup/temporary files
+*.bak
+*.tmp
