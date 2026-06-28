@@ -88,6 +88,28 @@ namespace CheckZone.Api.Services
             return true;
         }
 
+        public async Task<bool> UpdateReportAsync(string id, UpdateScamReportDto dto)
+        {
+            var report = await _context.ScamReports.FindAsync(id);
+            if (report == null) return false;
+
+            report.Name = dto.Name;
+            report.Phone = dto.Phone;
+            report.BankName = dto.BankName;
+            report.AccountNumber = dto.AccountNumber;
+            report.Desc = dto.Desc;
+            report.Type = dto.Type;
+            report.Amount = dto.Amount;
+            report.Victim = dto.Victim;
+            report.Facebook = dto.Facebook;
+            report.Tags = dto.Tags;
+            report.Images = dto.Images;
+            report.Category = (ScamCategory)dto.Category;
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
         public async Task<bool> RejectReportAsync(string id)
         {
             var report = await _context.ScamReports.FindAsync(id);

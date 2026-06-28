@@ -123,6 +123,23 @@ namespace CheckZone.Api.Controllers
         }
 
         [Authorize]
+        [HttpPut("admin/scams/{id}")]
+        public async Task<IActionResult> UpdateReport(string id, [FromBody] UpdateScamReportDto dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var success = await _scamReportService.UpdateReportAsync(id, dto);
+            if (!success)
+            {
+                return NotFound();
+            }
+            return Ok();
+        }
+
+        [Authorize]
         [HttpDelete("admin/scams/{id}/reject")]
         public async Task<IActionResult> RejectReport(string id)
         {
