@@ -24,8 +24,12 @@ namespace CheckZone.Api.Controllers
         {
             if (login.Username == "admin" && login.Password == "admin123")
             {
+                var jwtKey = _configuration["Jwt:Key"] ?? "CheckZone_Super_Secret_Key_For_JWT_Auth_2026_!@#";
+                var jwtIssuer = _configuration["Jwt:Issuer"] ?? "CheckZoneApi";
+                var jwtAudience = _configuration["Jwt:Audience"] ?? "CheckZoneFrontend";
+
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
+                var key = Encoding.UTF8.GetBytes(jwtKey);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new[] 
@@ -34,8 +38,8 @@ namespace CheckZone.Api.Controllers
                         new Claim(ClaimTypes.Role, "Admin")
                     }),
                     Expires = DateTime.UtcNow.AddDays(7),
-                    Issuer = _configuration["Jwt:Issuer"],
-                    Audience = _configuration["Jwt:Audience"],
+                    Issuer = jwtIssuer,
+                    Audience = jwtAudience,
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
                 var token = tokenHandler.CreateToken(tokenDescriptor);
