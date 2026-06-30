@@ -133,19 +133,22 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
+        var allowedOrigins = new List<string> 
+        { 
+            "http://localhost:3000", 
+            "http://localhost:5173", 
+            "http://localhost:5174" 
+        };
+        
         if (!string.IsNullOrEmpty(frontendUrl))
         {
-            policy.WithOrigins(frontendUrl.Split(','))
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
+            allowedOrigins.AddRange(frontendUrl.Split(','));
         }
-        else
-        {
-            policy.AllowAnyOrigin()
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        }
+
+        policy.WithOrigins(allowedOrigins.ToArray())
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials();
     });
 });
 
