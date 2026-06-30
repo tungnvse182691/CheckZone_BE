@@ -135,7 +135,8 @@ builder.Services.AddCors(options =>
         var frontendUrl = Environment.GetEnvironmentVariable("FRONTEND_URL");
         var allowedOrigins = new List<string> 
         { 
-            "http://localhost:3000", 
+            "http://localhost:3000",
+            "http://localhost:3001",
             "http://localhost:5173", 
             "http://localhost:5174" 
         };
