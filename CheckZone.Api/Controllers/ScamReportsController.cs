@@ -67,7 +67,7 @@ namespace CheckZone.Api.Controllers
             }
 
             var result = await _scamReportService.SubmitReportAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            return Created($"/api/public/scams/{result.Id}", result);
         }
 
         private async Task<bool> ValidateTurnstileToken(string token)

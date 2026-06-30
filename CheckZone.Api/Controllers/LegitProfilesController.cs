@@ -46,7 +46,7 @@ namespace CheckZone.Api.Controllers
             }
 
             var result = await _legitProfileService.CreateProfileAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            return Created($"/api/public/legit/{result.Id}", result);
         }
 
         [Authorize]
