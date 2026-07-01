@@ -42,6 +42,13 @@ namespace CheckZone.Api.Controllers
             return Ok(result);
         }
 
+        [HttpGet("public/reports/search")]
+        public async Task<ActionResult<IEnumerable<ScamReportDto>>> SearchReports([FromQuery] string query)
+        {
+            var result = await _scamReportService.SearchReportsAsync(query ?? string.Empty);
+            return Ok(result);
+        }
+
         [HttpGet("public/scams/{id}")]
         public async Task<ActionResult<ScamReportDto>> GetById(string id)
         {

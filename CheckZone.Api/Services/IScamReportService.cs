@@ -14,5 +14,6 @@ namespace CheckZone.Api.Services
         Task<bool> RejectReportAsync(string id);
         Task<IEnumerable<ScamReportDto>> GetAllAsync();
         Task<bool> UpdateReportAsync(string id, UpdateScamReportDto dto);
+        Task<IEnumerable<ScamReportDto>> SearchReportsAsync(string query);
     }
 }

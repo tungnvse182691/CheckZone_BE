@@ -126,6 +126,25 @@ namespace CheckZone.Api.Services
             return reports.Select(MapToDto);
         }
 
+        public async Task<IEnumerable<ScamReportDto>> SearchReportsAsync(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return new List<ScamReportDto>();
+            }
+
+            var q = query.Trim().ToLower();
+            var reports = await _context.ScamReports
+                .Where(x => x.Status == "Đã phê duyệt" &&
+                           (x.Name.ToLower().Contains(q) ||
+                            (x.Phone != null && x.Phone.ToLower().Contains(q)) ||
+                            x.AccountNumber.ToLower().Contains(q) ||
+                            x.BankName.ToLower().Contains(q)))
+                .ToListAsync();
+
+            return reports.Select(MapToDto);
+        }
+
         private static ScamReportDto MapToDto(ScamReport report)
         {
             return new ScamReportDto
